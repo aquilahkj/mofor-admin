@@ -1,6 +1,7 @@
 import { Effect, Reducer } from 'umi';
 
-import { queryCurrent, query as queryUsers } from '@/services/user';
+import { queryCurrent, query as queryUsers, getInfo } from '@/services/user';
+import { setAuthority } from '@/utils/authority';
 
 export interface CurrentUser {
   avatar?: string;
@@ -14,6 +15,7 @@ export interface CurrentUser {
   }[];
   userid?: string;
   unreadCount?: number;
+  authoritys?: string[];
 }
 
 export interface UserModelState {
@@ -26,10 +28,12 @@ export interface UserModelType {
   effects: {
     fetch: Effect;
     fetchCurrent: Effect;
+    getInfo: Effect;
   };
   reducers: {
     saveCurrentUser: Reducer<UserModelState>;
     changeNotifyCount: Reducer<UserModelState>;
+    saveInfo: Reducer<UserModelState>;
   };
 }
 
@@ -55,6 +59,13 @@ const UserModel: UserModelType = {
         payload: response,
       });
     },
+    *getInfo(_, { call, put }) {
+      const response = yield call(getInfo);
+      yield put({
+        type: 'saveInfo',
+        payload: response.data,
+      });
+    },
   },
 
   reducers: {
@@ -77,6 +88,13 @@ const UserModel: UserModelType = {
           notifyCount: action.payload.totalCount,
           unreadCount: action.payload.unreadCount,
         },
+      };
+    },
+    saveInfo(state, { payload }) {
+      setAuthority(payload.authoritys);
+      return {
+        ...state,
+        currentUser: payload || {},
       };
     },
   },

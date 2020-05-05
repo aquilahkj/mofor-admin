@@ -4,6 +4,8 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+import AuthorizedDeny from '@/components/AuthorizedDeny';
+import { getAccessToken } from './token';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -31,11 +33,14 @@ const errorHandler = (error: { response: Response }): Response => {
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
-
-    notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
-    });
+    if (response.status === 401) {
+      AuthorizedDeny();
+    } else {
+      notification.error({
+        message: `请求错误 ${status}: ${url}`,
+        description: errorText,
+      });
+    }
   } else if (!response) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',
@@ -51,6 +56,38 @@ const errorHandler = (error: { response: Response }): Response => {
 const request = extend({
   errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+});
+
+request.interceptors.request.use((url, options) => {
+  const headers = options.headers as Record<string, string>;
+  if (options.method === 'POST' || options.method === 'PUT' || options.method === 'DELETE') {
+    headers['Content-Type'] = `application/json`;
+  }
+  headers.Accept = `application/json`;
+  if (!url.startsWith('/api/auth')) {
+    const token = getAccessToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    } else {
+      AuthorizedDeny();
+    }
+  }
+
+  return {
+    url,
+    options: { ...options, headers },
+  };
+});
+
+request.interceptors.response.use(async (response) => {
+  const data = await response.clone().json();
+  if (data.code !== 0) {
+    notification.error({
+      message: `响应数据`,
+      description: data.message,
+    });
+  }
+  return response;
 });
 
 export default request;
