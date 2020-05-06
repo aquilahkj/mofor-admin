@@ -183,4 +183,11 @@ export default {
       authoritys: ['admin'],
     },
   },
+  'GET /api/user/getAuthority': {
+    code: 0,
+    message: 'ok',
+    data: {
+      authoritys: ['admin'],
+    },
+  },
 };

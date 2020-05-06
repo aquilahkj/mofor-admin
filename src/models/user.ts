@@ -1,7 +1,7 @@
 import { Effect, Reducer } from 'umi';
 
-import { queryCurrent, query as queryUsers, getInfo } from '@/services/user';
-import { setAuthority } from '@/utils/authority';
+import { getInfo } from '@/services/user';
+// import { setAuthority } from '@/utils/authority';
 
 export interface CurrentUser {
   avatar?: string;
@@ -15,7 +15,7 @@ export interface CurrentUser {
   }[];
   userid?: string;
   unreadCount?: number;
-  authoritys?: string[];
+  // authoritys?: string[];
 }
 
 export interface UserModelState {
@@ -26,13 +26,13 @@ export interface UserModelType {
   namespace: 'user';
   state: UserModelState;
   effects: {
-    fetch: Effect;
-    fetchCurrent: Effect;
+    // fetch: Effect;
+    // fetchCurrent: Effect;
     getInfo: Effect;
   };
   reducers: {
-    saveCurrentUser: Reducer<UserModelState>;
-    changeNotifyCount: Reducer<UserModelState>;
+    // saveCurrentUser: Reducer<UserModelState>;
+    // changeNotifyCount: Reducer<UserModelState>;
     saveInfo: Reducer<UserModelState>;
   };
 }
@@ -45,20 +45,20 @@ const UserModel: UserModelType = {
   },
 
   effects: {
-    *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-    },
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response,
-      });
-    },
+    // *fetch(_, { call, put }) {
+    //   const response = yield call(queryUsers);
+    //   yield put({
+    //     type: 'save',
+    //     payload: response,
+    //   });
+    // },
+    // *fetchCurrent(_, { call, put }) {
+    //   const response = yield call(queryCurrent);
+    //   yield put({
+    //     type: 'saveCurrentUser',
+    //     payload: response,
+    //   });
+    // },
     *getInfo(_, { call, put }) {
       const response = yield call(getInfo);
       yield put({
@@ -69,29 +69,29 @@ const UserModel: UserModelType = {
   },
 
   reducers: {
-    saveCurrentUser(state, action) {
-      return {
-        ...state,
-        currentUser: action.payload || {},
-      };
-    },
-    changeNotifyCount(
-      state = {
-        currentUser: {},
-      },
-      action,
-    ) {
-      return {
-        ...state,
-        currentUser: {
-          ...state.currentUser,
-          notifyCount: action.payload.totalCount,
-          unreadCount: action.payload.unreadCount,
-        },
-      };
-    },
+    // saveCurrentUser(state, action) {
+    //   return {
+    //     ...state,
+    //     currentUser: action.payload || {},
+    //   };
+    // },
+    // changeNotifyCount(
+    //   state = {
+    //     currentUser: {},
+    //   },
+    //   action,
+    // ) {
+    //   return {
+    //     ...state,
+    //     currentUser: {
+    //       ...state.currentUser,
+    //       notifyCount: action.payload.totalCount,
+    //       unreadCount: action.payload.unreadCount,
+    //     },
+    //   };
+    // },
     saveInfo(state, { payload }) {
-      setAuthority(payload.authoritys);
+      // setAuthority(payload.authoritys);
       return {
         ...state,
         currentUser: payload || {},

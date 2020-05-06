@@ -15,3 +15,7 @@ export async function queryNotices(): Promise<any> {
 export async function getInfo(): Promise<any> {
   return request('/api/user/getInfo');
 }
+
+export async function getAuthority(): Promise<any> {
+  return request('/api/user/getAuthority');
+}

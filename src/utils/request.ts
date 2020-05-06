@@ -83,7 +83,7 @@ request.interceptors.response.use(async (response) => {
   const data = await response.clone().json();
   if (data.code !== 0) {
     notification.error({
-      message: `响应数据`,
+      message: `服务异常`,
       description: data.message,
     });
   }

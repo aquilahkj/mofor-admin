@@ -69,7 +69,7 @@ class TokenTimer extends React.Component<TokenProps, TokenState> {
   }
 
   render() {
-    return <>{this.props.show && <div>最近更新时间:{this.state.lastTime}</div>}</>;
+    return <>{this.props.show && <div>Token最近更新时间:{this.state.lastTime}</div>}</>;
   }
 }
 export default TokenTimer;
